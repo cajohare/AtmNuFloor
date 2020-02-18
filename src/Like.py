@@ -1,3 +1,12 @@
+#====================================Like.py===================================#
+# Created by Ciaran O'Hare 2020
+
+# Contains functions for interfacing with the fortran code in src/like
+# the fortran likelihood code needs to be compiled first by running the make
+# file in src/like
+#==============================================================================#
+
+
 from __future__ import print_function
 from numpy import pi, sqrt, exp, zeros, size, shape, array, append, flipud, gradient
 from numpy import trapz, interp, loadtxt, log10, log, savetxt, vstack, transpose
@@ -13,13 +22,9 @@ from LabFuncs import *
 import shlex
 import subprocess
 import pprint
-#=================================Like.py======================================#
-# Various functions involved in producing the data that goes
-# into src/like
-#==============================================================================#
-
 
 #==============================================================================#
+# Loading list of atmospheric recoils to then make a histogram out of later
 def LoadAtmRecoils(Nuc):
     recoildat_fname='AtmNu_Recoils_'+Nuc.Name+'.txt'
     AtmRecoils = loadtxt(recoil_dir+recoildat_fname)
@@ -27,10 +32,9 @@ def LoadAtmRecoils(Nuc):
 #==============================================================================#
 
 
-
-
 #==============================================================================#
-#==============================================================================#
+# Both of these functions save WIMP/neutrino data in a format that can be then
+# read by the fortran code
 def SaveWIMPData(inp,R_sig,m_vals):
     nTot_bins = shape(R_sig)[1]
     nm = shape(R_sig)[0]
@@ -52,13 +56,12 @@ def SaveNuData(inp,R_nu,Flux_norm,Flux_err):
     savetxt(recoil_dir+'RD_bg_'+inp+'.txt',dat2,header=hdr2)
     return
 #==============================================================================#
-#==============================================================================#
 
 
 
 
 #==============================================================================#
-#==============================================================================#
+# These are functions that call the compiled fortran code from python. The first
 def runDL_fort(inp,ex_min=1.0e-1,ex_max=1.0e7,n_ex=9,\
                   verbose=False):
     savetxt(recoil_dir+'Ex_'+inp+'.txt',array([[ex_min],[ex_max],[n_ex]]))
@@ -99,13 +102,14 @@ def runDL(inp,R_sig,R_nu,m_vals,ex_min,ex_max,n_ex,f_AtmNu=0.25,A_CR=1.0,verbose
     rc = runDL_fort(inp,ex_min=ex_min,ex_max=ex_max,n_ex=n_ex,verbose=verbose)
     return
 #==============================================================================#
-#==============================================================================#
 
 
 
 
 #==============================================================================#
 #==============================================================================#
+# Generating the non-directional signal (wimp) and background (neutrino)
+# distributions
 def Rsig_NonDirectional(Nuc,m_vals,E_min,E_max,ne,np=np,\
                          HaloModel=SHM):
 
@@ -152,6 +156,8 @@ def Rnu_NonDirectional(Nuc,E_min,E_max,ne):
 
 #==============================================================================#
 #==============================================================================#
+# Function used to correct the full E, costh distribution for a value of A
+# We do this simply by rescaling the costh distribution for each energy bin
 def Acorr(R_1,A_CR):
     ne = int(sqrt(size(R_1)))
     R_1 = reshape(R_1,(ne,ne))
@@ -162,11 +168,11 @@ def Acorr(R_1,A_CR):
         if sum(R_1[:,i])>0:
             dy = amax(y)-amin(y)
             midy = mean(y)
-            R_1_red[:,i] = A_CR*(y-midy)+midy
+            R_1_red[:,i] = A_CR*(y-midy)+midy # rescale by A
             R_1_red[:,i] = R_1_red[:,i]*sum(R_1[:,i])/sum(R_1_red[:,i])
     return ravel(R_1_red)
 
-
+# WIMP distribution as a function of E_r and costh
 def Rsig_Ecosth(t1,Nuc,m_vals,E_min,E_max,ne,\
                 np=20,sigma_p=1.0e-45,HaloModel=SHM,CygnusTracking=True,\
                 HT=False):
@@ -197,6 +203,7 @@ def Rsig_Ecosth(t1,Nuc,m_vals,E_min,E_max,ne,\
                     ' | R =',sum(R_sig[i,:]))
     return R_sig
 
+# Same but averaged over one day
 def Rsig_Ecosth_TimeAveraged(nt,Nuc,m_vals,E_min,E_max,ne,\
                             np=20,sigma_p=1.0e-45,HaloModel=SHM,HT=False):
     tvals = JulianDay(1,9,2020,0.0)+linspace(0,1.0-1.0/(1.0*nt),nt)
@@ -209,8 +216,7 @@ def Rsig_Ecosth_TimeAveraged(nt,Nuc,m_vals,E_min,E_max,ne,\
     R_sig = R_sig/(1.0*nt)
     return R_sig
 
-
-
+# Neutrino distribution
 def Rnu_Ecosth(Nuc,E_min,E_max,ne,AtmRecoils,CygnusTracking=True,HT=False):
     Names,Solar,E_nu_all,Flux_all,Flux_norm,Flux_err = GetNuFluxes(3.0,Nuc=Nuc)
 
@@ -238,8 +244,7 @@ def Rnu_Ecosth(Nuc,E_min,E_max,ne,AtmRecoils,CygnusTracking=True,HT=False):
     dY = Y[1:,1:]-Y[0:-1,1:]
 
 
-
-    # Solar
+    ##### Solar
     for s in [0,1]:
         dR = eff3*dRdEdcosth_SolNu(E_nu_all[s,:],Flux_all[s,:],t1,costh_edges,E_r_edges,Nuc=Nuc,CygnusTracking=CygnusTracking)
         R = 0.5*0.5*dX*dY*(dR[1:,1:]+dR[1:,0:-1]+dR[0:-1,1:]+dR[0:-1,0:-1])
@@ -247,7 +252,7 @@ def Rnu_Ecosth(Nuc,E_min,E_max,ne,AtmRecoils,CygnusTracking=True,HT=False):
         R_nu[s,:] = ravel(R)
 
 
-    # DSNB
+    ##### DSNB
     for i in range(0,ne):
         dR = dcosth2[i]*eff1*dRdE_nu(E_r_edges,67+Jan1,False,\
                                         E_nu_all[0,:],Flux_all[0,:],Nuc=Nuc)
@@ -257,7 +262,7 @@ def Rnu_Ecosth(Nuc,E_min,E_max,ne,AtmRecoils,CygnusTracking=True,HT=False):
 
 
 
-    # Atm
+    ##### Atm
     #     for i in range(0,ne):
     #         dR = dRdE_nu(E_r_edges,67+Jan1,False,E_nu_all[1,:],Flux_all[1,:],Nuc=Nuc)
     #         R[i,:] = 0.5*(E_r_edges[1:]-E_r_edges[0:-1])*(dR[1:]+dR[0:-1])
@@ -281,6 +286,7 @@ def Rnu_Ecosth(Nuc,E_min,E_max,ne,AtmRecoils,CygnusTracking=True,HT=False):
     R_nu[3,:] = ravel(R)
 
 
+    # Normalise to total rates
     R_nu[0,:] *= R_hep(E_min,E_max,Nuc=Nuc,eff_on=True)/sum(R_nu[0,:])
     R_nu[1,:] *= R_8B(E_min,E_max,Nuc=Nuc,eff_on=True)/sum(R_nu[1,:])
     R_nu[2,:] *= R_DSNB(E_min,E_max,Nuc=Nuc,eff_on=True)/sum(R_nu[2,:])

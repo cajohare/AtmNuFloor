@@ -1,10 +1,7 @@
 #===============================WIMPFuncs.py===================================#
 # Created by Ciaran O'Hare 2020
 
-# Description:
-
-
-# Contains:
+# Contains all the functions for doing the WIMPy calculations
 
 #==============================================================================#
 

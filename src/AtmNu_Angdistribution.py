@@ -6,6 +6,8 @@ from numpy import random
 from Params import *
 from NeutrinoFuncs import *
 
+# Script for creating the nice distributions of CEvNS recoils (Fig. 1)
+
 # This file doesn't save all its recoils because we need a large number to
 # make a nice plot of energy/phi/costh distribution. So everytime this file
 # is run the new distribution is merged with a previous one to make it smoother

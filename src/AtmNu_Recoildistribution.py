@@ -12,6 +12,10 @@ from LabFuncs import *
 # is run the new distribution is merged with a previous one to make it smoother
 # each time.
 
+# I needed to run this file (both Xe131 and Ar40) around 10 times to get
+# a nice distribution, but the recoil file ends up being huge (which is why
+# it's not in the git repository)
+
 #==============================================================================#
 # Input
 Nuc = eval(sys.argv[1])

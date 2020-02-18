@@ -1,5 +1,5 @@
 #================================LabFuncs.py===================================#
-# Created by Ciaran O'Hare 2019
+# Created by Ciaran O'Hare 2020
 
 # Description:
 # Contains an assortment of functions that are all related to the 'Lab' somehow
@@ -7,8 +7,9 @@
 
 
 # Contains:
-
 #####
+# Efficiency functions for Ar and Xe
+# Energy resolution functions for Ar and Xe
 # FormFactorHelm: Only Form factor being used atm
 #####
 

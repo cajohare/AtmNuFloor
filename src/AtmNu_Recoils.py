@@ -1,3 +1,10 @@
+#===========================AtmNu_Recoils.py===================================#
+# Created by Ciaran O'Hare 2020
+
+# Script for doing the Monte Carlo sim of atmopsheric neutrino recoils
+#==============================================================================#
+
+
 import os
 import sys
 sys.path.append('../src')

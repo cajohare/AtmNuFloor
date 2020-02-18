@@ -1,10 +1,7 @@
 #===========================NeutrinoFuncs.py===================================#
-# Created by Ciaran O'Hare 2019
+# Created by Ciaran O'Hare 2020
 
-# Description:
-
-
-# Contains:
+# Contains functions for performing calculations of CEvNS
 
 #==============================================================================#
 
@@ -23,6 +20,8 @@ from Params import G_F_GeV, sinTheta_Wsq, N_A, Jan1, EarthRadius, eV2J
 from numpy import random
 from scipy.spatial import ConvexHull
 
+
+#==============================================================================#
 def GetAtmNuFluxes(fname,GetIndivSpecies=False):
     #### Import AtmNu data
     cosZ = flipud(arange(-1,1,0.1)+0.05)
@@ -76,8 +75,11 @@ def GetAtmNuFluxes(fname,GetIndivSpecies=False):
         Phi_tot = Phi_mu + Phi_mubar + Phi_e + Phi_ebar
 
     return Phi_tot,E_high,cosZ,phi_Az
+#==============================================================================#
 
 
+
+#==============================================================================#
 # Total rate of indiv neutrino species
 def R_Indiv(s,E_th,E_max,Nuc=Params.Ar40,eff_on=False,eres_on=False):
     nfine = 1000
@@ -103,6 +105,7 @@ def R_Indiv(s,E_th,E_max,Nuc=Params.Ar40,eff_on=False,eres_on=False):
     R = trapz(dR[mask],Efine[mask])
     return R
 
+# Specific examples, for quick access
 def R_hep(E_th,E_max,Nuc=Params.Ar40,eff_on=True,eres_on=False):
     return R_Indiv(2,E_th,E_max,Nuc=Nuc,eff_on=eff_on,eres_on=eres_on)
 
@@ -114,10 +117,10 @@ def R_AtmNu(E_th,E_max,Nuc=Params.Ar40,eff_on=True,eres_on=False):
 
 def R_DSNB(E_th,E_max,Nuc=Params.Ar40,eff_on=True,eres_on=False):
     return R_Indiv(9,E_th,E_max,Nuc=Nuc,eff_on=eff_on,eres_on=eres_on)
+#==============================================================================#
 
 
 #===============================Reactor neutrinos data=========================#
-
 def ReactorFlux(E_nu,Loc):
     # from https://arxiv.org/abs/1101.2663 TABLE VI.
     U235_c = array([3.217,-3.111,1.395,-0.3690,0.04445,-0.002053])
@@ -200,11 +203,15 @@ def GetNuFluxes(E_th,Nuc):
         ii = ii+1
     return Names,Solar,E_nu_all,Flux_all,Flux_norm,Flux_err
 
- #-----------------------------------------------------------------------------#
+#==============================================================================#
 def MaxNuRecoilEnergies(Nuc): # Max recoil energies
     m_N = 0.93141941*(Nuc.MassNumber)*1.0e6
     E_r_max = 2*m_N*(1000.0*NuMaxEnergy)**2.0/(m_N+1000*NuMaxEnergy)**2.0
     return E_r_max
+#==============================================================================#
+
+
+
 
 
 #===================================nu spectra=================================#
@@ -212,11 +219,12 @@ def AllNuRates(E_r,t,Solar,E_nu_all,Flux_all,Nuc=Params.Ar40): # Time-Energy
     n_nu = shape(Flux_all)[0]
     ne = size(E_r)
     dR = zeros(shape=(n_nu,ne))
-
     for i in range(0,n_nu):
         dR[i,:] = dRdE_nu(E_r,t,Solar[i],E_nu_all[i,:],Flux_all[i,:],Nuc=Nuc)
     return dR
 
+#==============================================================================#
+# CEvNS event rate vs recoil energy E_r
 def dRdE_nu(E_r,t,sol,E_nu,Flux,Nuc=Params.Ar40):
     N = Nuc.NumberOfNeutrons
     Z = Nuc.NumberOfProtons
@@ -251,9 +259,11 @@ def dRdE_nu(E_r,t,sol,E_nu,Flux,Nuc=Params.Ar40):
     # Convert into /ton/year/keV
     dRdE = fMod*dRdE*1000*seconds2year
     return dRdE
+#==============================================================================#
 
-
-def dRdEdO_solarnu(E,t,E_nu,Flux,Nuc,Loc=Params.GranSasso,CygnusTracking=False): # Directional CEnuNS for Solar
+#==============================================================================#
+# CEvNS event rate as a function of recoil direction and energy
+def dRdEdO_solarnu(E,t,E_nu,Flux,Nuc,Loc=Params.GranSasso,CygnusTracking=False):
     N = Nuc.NumberOfNeutrons
     Z = Nuc.NumberOfProtons
     Q_W = N-(1-4.0*sinTheta_Wsq)*Z # weak nuclear hypercharge
@@ -291,7 +301,7 @@ def dRdEdO_solarnu(E,t,E_nu,Flux,Nuc,Loc=Params.GranSasso,CygnusTracking=False):
                 Eps = Eps*(Eps>E_nu_min)
                 Eps = Eps*(Eps<E_nu_keV[-1])
                 F_value = interp(Eps,E_nu_keV,Flux)
-                dRdEdO[i] = diff_sigma*F_value*Eps**2.0/(1000*E_nu_min)*FF[i] # /kg/keV
+                dRdEdO[i] = diff_sigma*F_value*Eps**2.0/(1000*E_nu_min)*FF[i]
 
     # MONOCHROMATIC NEUTRINOS
     else:
@@ -313,9 +323,10 @@ def dRdEdO_solarnu(E,t,E_nu,Flux,Nuc,Loc=Params.GranSasso,CygnusTracking=False):
                 dRdEdO[i] = diff_sigma*(Flux[0]/1000.0)*E_nu_keV[0] # /kg/keV
 
 
-    fMod = LabFuncs.EarthSunDistanceMod(t)
+    fMod = LabFuncs.EarthSunDistanceMod(t) # add Annual modulation
     dRdEdO = fMod*dRdEdO*3600*24*365*1000/(2*pi) # /ton/year
     return dRdEdO
+#==============================================================================#
 
 
 #===================================Monte Carlo=================================#
@@ -391,6 +402,10 @@ def GenerateAtmNuDirections(ngen,E_fine,Phi_fine,E_high,Phi_Ang,cosZ,phi_Az,Nuc)
     costh_nu_gen += (dcosth/2.0)*(2*random.uniform(size=ngen)-1)
     return E_gen,phi_nu_gen,costh_nu_gen,E_r_gen
 
+
+#==============================================================================#
+# Scatter a set of monte carlo generated neutrino directions to create recoil
+# vectors
 def ScatterNeutrinos(Nuc,E_gen,phi_nu_gen,costh_nu_gen,E_r_gen):
     ngen = size(E_gen)
 
@@ -431,6 +446,10 @@ def ScatterNeutrinos(Nuc,E_gen,phi_nu_gen,costh_nu_gen,E_r_gen):
     return E_r_gen,phi_r_gen,costh_r_gen
 
 
+
+
+#==============================================================================#
+# Event rate vs |costh| and energy for Solar neutrinos
 def dRdEdcosth_SolNu(E_nu,Flux,t1,costh_vals,E_r_vals,\
                     Nuc=Params.Ar40,\
                     Loc=Params.GranSasso,\
@@ -457,9 +476,11 @@ def dRdEdcosth_SolNu(E_nu,Flux,t1,costh_vals,E_r_vals,\
                             dRdEdO_solarnu(E2,t1,E_nu,Flux,Nuc,Loc=Loc,CygnusTracking=CygnusTracking),ph)
 
     return dR
+#==============================================================================#
 
 
-
+#==============================================================================#
+# Neutrino recoil distributions for columnar recombination
 def R_Ecosth2_Iso(E_nu,Flux,A_CR,E_min,E_max=200.0,ne=20,\
                         Nuc=Params.Ar40):
 
@@ -534,3 +555,4 @@ def R_IS_Iso(E_nu,Flux,A_CR,E_min,E_max=200.0,ne=20,\
                 points = column_stack((x,y,z))
                 R[i,j] = ConvexHull(points,qhull_options='W1e-17 E1e-17').volume
     return R
+#==============================================================================#

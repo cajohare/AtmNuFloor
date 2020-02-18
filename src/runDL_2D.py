@@ -1,3 +1,18 @@
+#================================RunDL_2D.py===================================#
+# Created by Ciaran O'Hare 2020
+
+# Script for running the 1D discovery limits (at fixed mass)
+# The atmospheric neutrinos need to be generated first by running both
+# python AtmNu_Recoils.py Xe131
+# python AtmNu_Recoils.py Ar40
+#
+# Then the results for Fig. 8 can be run by doing
+# python runDL_1D.py
+#
+# It takes about an hour on my computer
+#==============================================================================#
+
+
 import sys
 sys.path.append('../src')
 from numpy import *
