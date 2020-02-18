@@ -4,8 +4,8 @@
 [//]:[![arXiv](https://img.shields.io/badge/arXiv-1909.04684-B31B1B.svg)](https://arxiv.org/abs/1909.04684)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
-This is still a work in progress getting this to be user-friendly. 
-Please contact me at ciaran.aj.ohare@gmail.com if you want to complain about why something doesn't work.
+This is still a work in progress getting this to be more user-friendly, so sorry about that. 
+Please contact me at ciaran.aj.ohare@gmail.com if you want to complain about why something doesn't work or if you want me to comment more thoroughly.
 
 ## Contents
 
