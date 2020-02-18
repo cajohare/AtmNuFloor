@@ -10,9 +10,9 @@ __pycache__/
 *.so
 
 # Fortran
-.o
-.mod
-.dSYM
+*.o
+*.mod
+*.dSYM
 
 # Distribution / packaging
 .Python
