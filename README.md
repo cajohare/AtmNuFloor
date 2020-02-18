@@ -26,4 +26,4 @@ The code is all written in python3 and makes substantial use of the standard num
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 
-<img src="plots/plots_png/hig.png" width="900" height="600">
+<img src="plots/plots_png/hig.png" width="800" height="600">
