@@ -12,28 +12,18 @@ Please contact me at ciaran.aj.ohare@gmail.com if you want to complain about why
 The code, plots, datas, etc. are sorted as follows:
 
 * `data/` - various bits of required data
-* `erec/` - main body of the code
+* `src/` - main body of the python code
+* `src/like` - profile likelihood code written in fortran. This is run via python but needs to be compiled first
 * `notebooks/` - notebooks for plotting and going through the code
 * `plots/` - plots get put here
 
 ## Requirements
 
-The code is all written in python3 and makes substantial use of the standard numpy, matplotlib, scipy etc. There are several additional libraries that you may need to investigate depending on your installation:
-
-* [`cmocean`](https://matplotlib.org/cmocean/), aesthetic colormaps
-* [`iminuit`](https://iminuit.readthedocs.io/en/latest/), used for maximum likelihood code
-
+The code is all written in python3 and makes substantial use of the standard numpy, matplotlib, scipy etc. I also use [`cmocean`](https://matplotlib.org/cmocean/) for some of the colormaps
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 
----
-
-
-# The Results
-Each plot can be recreated in a fairly self-contained fashion. Here is each figure in the paper in order and links to a notebook to see how it was made.
-
-
-<img src="plots/plots_png/hig.png" width="600" height="600">
+<img src="plots/plots_png/hig.png" width="1000" height="600">
