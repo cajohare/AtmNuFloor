@@ -9,8 +9,8 @@ module params
 ! Look at this as a dictionary if you want to know what any parameter is for           !
 !======================================================================================!
 
-character(len=100),parameter :: homedir='/Users/ciaranohare/Work/Sydney/AtmNuFloor'
-character(len=100),parameter :: mylimitsdir = '/Users/ciaranohare/Work/Sydney/AtmNuFloor/data/WIMPlimits/mylimits'
+character(len=100),parameter :: homedir='/Users/ciaranohare/Work/AtmNuFloor'
+character(len=100),parameter :: mylimitsdir = '/Users/ciaranohare/Work/AtmNuFloor/data/WIMPlimits/mylimits'
 
 
 

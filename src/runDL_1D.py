@@ -31,7 +31,7 @@ if Nuc.Name=='Xe':
 elif Nuc.Name=='Ar':
     E_min = 10.0
     E_max = 400.0
-    m_chi = 5000.0
+    m_chi = 100.0
 m_vals = logspace(log10(m_chi),log10(m_chi),1)
 #==============================================================================#
 
